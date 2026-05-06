@@ -40,15 +40,31 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [weather, setWeather] = useState(MOCK_WEATHER);
 
+  const fetchWeather = async (cityName: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:8080/weather?city=${cityName}`);
+      const data = await response.json();
+      setWeather(data);
+    } catch (error) {
+      console.error("Failed to fetch weather:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    // Simulate API Call
-    setTimeout(() => {
-      setLoading(false);
+    if (search.trim()) {
+      fetchWeather(search);
       setSearch("");
-    }, 1000);
+    }
   };
+
+  useEffect(() => {
+    // Initial fetch
+    // fetchWeather(weather.city);
+  }, []);
 
   const getWeatherIcon = (condition: string, size = 48) => {
     switch (condition) {
